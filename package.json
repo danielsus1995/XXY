@@ -1,0 +1,11 @@
+{
+  "name": "zdravejidlo",
+  "version": "1.0.0",
+  "description": "Zdravé jídlo za méně peněz",
+  "scripts": {
+    "dev": "vercel dev"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.52.0"
+  }
+}

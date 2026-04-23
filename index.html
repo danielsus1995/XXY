@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rodinný jídelníček na míru</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<!-- ════════════════════════════════════════════════════════════
+     FORM PAGE
+════════════════════════════════════════════════════════════ -->
+<div id="formPage">
+
+  <header class="hero">
+    <div class="hero-inner">
+      <p class="hero-eyebrow">Rodinný plán</p>
+      <h1 class="hero-title">Jeden hrnec,<br/><em>každý svůj cíl.</em></h1>
+      <p class="hero-sub">Přidej každého člena rodiny, nastav jeho cíl — dostanete společný jídelníček s instrukcemi, co kdo přidá nebo vynechá.</p>
+    </div>
+  </header>
+
+  <main class="form-wrap">
+    <form id="planForm" novalidate>
+
+      <!-- ── KROK 1: ČLENOVÉ ── -->
+      <div class="form-section">
+        <div class="section-label">
+          <span class="step-num">1</span>
+          <span>Členové rodiny</span>
+        </div>
+
+        <div id="membersContainer"></div>
+
+        <button type="button" id="addMemberBtn" class="add-member-btn">
+          + Přidat dalšího člena
+        </button>
+        <p class="field-error hidden" id="membersError">Přidej alespoň jednoho člena s vyplněnými údaji.</p>
+      </div>
+
+      <!-- ── KROK 2: SPOLEČNÉ PREFERENCE ── -->
+      <div class="form-section">
+        <div class="section-label">
+          <span class="step-num">2</span>
+          <span>Společné nastavení</span>
+        </div>
+
+        <div class="input-row">
+          <div class="form-group">
+            <label for="budget">Týdenní rozpočet rodiny (Kč)</label>
+            <input type="number" id="budget" placeholder="např. 2 500" min="300" required />
+          </div>
+          <div class="form-group">
+            <label for="diet">Společné omezení</label>
+            <div class="select-wrap">
+              <select id="diet">
+                <option value="">Žádné</option>
+                <option value="vegetariánská">Vegetariánská</option>
+                <option value="veganská">Veganská</option>
+                <option value="bezlepková">Bezlepková</option>
+                <option value="nízkosacharidová">Nízkosacharidová</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <button type="submit" class="submit-btn" id="submitBtn">
+        <span id="btnText">Vygenerovat rodinný plán</span>
+        <span id="btnLoader" class="hidden loader-row">
+          <span class="spinner"></span> Připravuji plán pro rodinu…
+        </span>
+      </button>
+    </form>
+  </main>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════
+     RESULT PAGE
+════════════════════════════════════════════════════════════ -->
+<div id="resultPage" class="hidden">
+
+  <div class="result-hero family-hero">
+    <div class="result-hero-inner">
+      <p class="result-eyebrow">Rodinný jídelníček</p>
+      <h2 class="result-title" id="resultTitle">—</h2>
+      <p class="result-sub" id="resultSub">—</p>
+    </div>
+  </div>
+
+  <div class="result-main">
+
+    <!-- MEMBER PROFILES -->
+    <div id="memberProfiles" class="member-profiles-wrap"></div>
+
+    <!-- SUMMARY -->
+    <div class="summary-bar">
+      <div class="summary-item">
+        <span class="s-val" id="sumCena">—</span>
+        <span class="s-lab">celková cena / týden</span>
+      </div>
+      <div class="summary-item">
+        <span class="s-val" id="sumDen">—</span>
+        <span class="s-lab">na osobu / den</span>
+      </div>
+      <div class="summary-item">
+        <span class="s-val" id="sumClenove">—</span>
+        <span class="s-lab">členů v plánu</span>
+      </div>
+    </div>
+
+    <!-- TABS -->
+    <div class="tabs">
+      <button class="tab active" data-tab="Jidelnicek">📅 Jídelníček</button>
+      <button class="tab" data-tab="Nakup">🛒 Nákup</button>
+      <button class="tab" data-tab="Tipy">💡 Tipy</button>
+    </div>
+
+    <!-- TAB: JÍDELNÍČEK -->
+    <div id="tabJidelnicek" class="tab-content active">
+      <div class="legend-row" id="legendRow"></div>
+      <div id="dnyContainer"></div>
+    </div>
+
+    <!-- TAB: NÁKUP -->
+    <div id="tabNakup" class="tab-content hidden">
+      <div class="card">
+        <div class="card-header-row">
+          <h3>Nákupní seznam</h3>
+          <button class="chip-btn" id="copyBtn">Kopírovat</button>
+        </div>
+        <table>
+          <thead><tr><th>Položka</th><th>Množství</th><th>Kč</th></tr></thead>
+          <tbody id="nakupBody"></tbody>
+          <tfoot><tr><td colspan="2">Celkem</td><td id="nakupTotal"></td></tr></tfoot>
+        </table>
+      </div>
+    </div>
+
+    <!-- TAB: TIPY -->
+    <div id="tabTipy" class="tab-content hidden">
+      <div class="card">
+        <h3>Tipy na úsporu</h3>
+        <ul id="tipyUsporu"></ul>
+      </div>
+      <div class="card">
+        <h3>Výživa pro celou rodinu</h3>
+        <ul id="tipyVyziva"></ul>
+      </div>
+    </div>
+
+    <button class="back-btn" id="resetBtn">← Zpět na formulář</button>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
